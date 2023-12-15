@@ -32,8 +32,6 @@ class MainActivity : AppCompatActivity() {
                 listar()
             }
 
-
-
         }
 
         try {
@@ -48,7 +46,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun listar() {
 
-        TODO("Not yet implemented")
+        val sql = "SELECT * FROM produtos;"
+
+        val cursor = bancoDados.readableDatabase.rawQuery( sql, null )
+
+        //cursor.moveToFirst()
+        while ( cursor.moveToNext()) {   // false ou true
+
+            Log.i("info_db", "posicao: ${cursor.position}")
+
+        }
+        cursor.moveToNext()
+
+
     }
 
     private fun salvar() {
