@@ -4,16 +4,37 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.luizafmartinez.sqlitenoandroid.database.DatabaseHelper
+import com.luizafmartinez.sqlitenoandroid.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private val binding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
 
     private val bancoDados by lazy {
         DatabaseHelper( this )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        setContentView( binding.root)
+
+        with(binding) {
+
+            btnSalvar.setOnClickListener{
+                salvar()
+            }
+
+            btnListar.setOnClickListener{
+                listar()
+            }
+
+
+
+        }
 
         try {
             bancoDados.writableDatabase.execSQL(
@@ -23,6 +44,25 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.i("info_db", "Sucesso ao inserir.")
         }
-
     }
+
+    private fun listar() {
+
+        TODO("Not yet implemented")
+    }
+
+    private fun salvar() {
+
+        val titulo = binding.editProduto.text.toString()
+
+        val sql = "INSERT INTO produtos VALUES (null,'$titulo', 'Descricao...');"
+
+        try {
+            bancoDados.writableDatabase.execSQL( sql )
+            Log.i("info_db", "Sucesso ao inserir.")
+        } catch (e: Exception) {
+            Log.i("info_db", "Sucesso ao inserir.")
+        }
+    }
+
 }
