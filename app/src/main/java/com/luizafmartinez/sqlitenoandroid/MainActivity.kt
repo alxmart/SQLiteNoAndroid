@@ -17,21 +17,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-
         setContentView( binding.root)
-
         with(binding) {
-
             btnSalvar.setOnClickListener{
                 salvar()
             }
-
             btnListar.setOnClickListener{
                 listar()
             }
-
         }
 
         try {
@@ -46,27 +40,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun listar() {
 
-        val sql = "SELECT * FROM produtos;"
-
-        val cursor = bancoDados.readableDatabase.rawQuery( sql, null )
+        val sql = "SELECT * FROM ${DatabaseHelper.TABELA_PRODUTOS};"
+        val cursor = bancoDados.readableDatabase
+            .rawQuery( sql, null )
 
         //cursor.moveToFirst()
-        while ( cursor.moveToNext()) {   // false ou true
+        val indiceId = cursor.getColumnIndex( "${DatabaseHelper.ID_PRODUTO}")
+        val indiceTitulo = cursor.getColumnIndex("${DatabaseHelper.TITULO}")
+        val indiceDescricao = cursor.getColumnIndex("${DatabaseHelper.DESCRICAO}")
 
-            Log.i("info_db", "posicao: ${cursor.position}")
+        while ( cursor.moveToNext() ) {   // false ou true
 
+            val idProduto = cursor.getInt(indiceId)
+            val titulo = cursor.getString(indiceTitulo)
+            val descricao = cursor.getString(indiceDescricao)
+
+            //Log.i("info_db", "posicao: ${cursor.position}")
+            Log.i("info_db", "id: $idProduto - $titulo ")
         }
         cursor.moveToNext()
-
-
     }
 
     private fun salvar() {
-
         val titulo = binding.editProduto.text.toString()
-
         val sql = "INSERT INTO produtos VALUES (null,'$titulo', 'Descricao...');"
-
         try {
             bancoDados.writableDatabase.execSQL( sql )
             Log.i("info_db", "Sucesso ao inserir.")
