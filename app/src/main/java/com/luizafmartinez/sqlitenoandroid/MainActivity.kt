@@ -19,13 +19,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView( binding.root)
+
         with(binding) {
+
             btnSalvar.setOnClickListener{
                 salvar()
             }
+
             btnListar.setOnClickListener{
                 listar()
             }
+
+            btnAtualizar.setOnClickListener {
+                atualizar()
+            }
+
+            btnRemover.setOnClickListener {
+                remover()
+            }
+
+
+
         }
 
         try {
@@ -36,6 +50,36 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.i("info_db", "Sucesso ao inserir.")
         }
+    }
+
+    private fun remover() {
+
+        val sql = "DELETE FROM ${DatabaseHelper.TABELA_PRODUTOS} " +
+                "WHERE ${DatabaseHelper.ID_PRODUTO} = 1;"
+
+        try {
+            bancoDados.writableDatabase.execSQL( sql )
+            Log.i("info_db", "Sucesso ao atualizar.")
+        } catch (e: Exception) {
+            Log.i("info_db", "Erro ao atualizar.")
+        }
+    }
+
+    private fun atualizar() {
+
+        val titulo = binding.editProduto.text.toString()
+
+        val sql = "UPDATE ${DatabaseHelper.TABELA_PRODUTOS} " +
+                "SET ${DatabaseHelper.TITULO} = '$titulo' " +
+                "WHERE ${DatabaseHelper.ID_PRODUTO} = 1; "
+
+        try {
+            bancoDados.writableDatabase.execSQL( sql )
+            Log.i("info_db", "Sucesso ao atualizar.")
+        } catch (e: Exception) {
+            Log.i("info_db", "Erro ao atualizar.")
+        }
+
     }
 
     private fun listar() {
@@ -62,13 +106,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun salvar() {
+
         val titulo = binding.editProduto.text.toString()
+
         val sql = "INSERT INTO produtos VALUES (null,'$titulo', 'Descricao...');"
+
         try {
             bancoDados.writableDatabase.execSQL( sql )
             Log.i("info_db", "Sucesso ao inserir.")
         } catch (e: Exception) {
-            Log.i("info_db", "Sucesso ao inserir.")
+            Log.i("info_db", "Erro ao inserir.")
         }
     }
 
