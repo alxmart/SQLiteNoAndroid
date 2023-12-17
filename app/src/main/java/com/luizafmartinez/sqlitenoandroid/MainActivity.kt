@@ -3,6 +3,7 @@ package com.luizafmartinez.sqlitenoandroid
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.luizafmartinez.sqlitenoandroid.database.DatabaseHelper
 import com.luizafmartinez.sqlitenoandroid.database.ProdutoDAO
 import com.luizafmartinez.sqlitenoandroid.databinding.ActivityMainBinding
@@ -19,7 +20,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView( binding.root)
 
@@ -45,35 +45,71 @@ class MainActivity : AppCompatActivity() {
 
     private fun remover() {
         val produtoDAO = ProdutoDAO(this)
-        produtoDAO.remover(18)
+        produtoDAO.remover(21)
     }
 
     private fun atualizar() {
         val titulo = binding.editProduto.text.toString()
         val produtoDAO = ProdutoDAO(this)
         val produto = Produto(
-            18, titulo, "descricao"
+            21, titulo, "descricao"
         )
-        produtoDAO.atualizar( produto )
-    }
+        produtoDAO.atualizar(produto)
 
-    private fun listar() {
-        val produtoDAO = ProdutoDAO(this)
-        val listaProdutos = produtoDAO.listar()
-        if ( listaProdutos.isNotEmpty() ) {
-            listaProdutos.forEach { produto ->
-                Log.i("info_db", "${produto.idProduto} - ${produto.titulo}")
-            }
+        if (produtoDAO.atualizar(produto)) {
+            Toast.makeText(
+                this,
+                "Sucesso ao atualizar produto",
+                Toast.LENGTH_SHORT
+            ).show()
+            binding.editProduto.setText("")
+        } else {
+            Toast.makeText(
+                this,
+                "Erro ao atualizar produto",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-      private fun salvar() {
-        val titulo = binding.editProduto.text.toString()
-        val produtoDAO = ProdutoDAO(this)
-        val produto = Produto(
-            -1, titulo, "descricao"
-        )
-        produtoDAO.salvar( produto )
-    }
+        private fun listar() {
 
-}
+            val produtoDAO = ProdutoDAO(this)
+            val listaProdutos = produtoDAO.listar()
+
+            var texto = ""
+            if (listaProdutos.isNotEmpty()) {
+                listaProdutos.forEach { produto ->
+                    texto += "${produto.idProduto} - ${produto.titulo} \n"
+                    Log.i("info_db", "${produto.idProduto} - ${produto.titulo}")
+                }
+                binding.textResultado.text = texto
+            } else {
+                binding.textResultado.text = "Nenhum item cadastrado."
+            }
+        }
+
+        private fun salvar() {
+
+            val titulo = binding.editProduto.text.toString()
+            val produtoDAO = ProdutoDAO(this)
+            val produto = Produto(
+                -1, titulo, "descricao"
+            )
+            if (produtoDAO.salvar(produto)) {
+                Toast.makeText(
+                    this,
+                    "Sucesso ao cadastrar produto",
+                    Toast.LENGTH_SHORT
+                ).show()
+                binding.editProduto.setText("")
+            } else {
+                Toast.makeText(
+                    this,
+                    "Erro ao cadastrar produto",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
+        }
+    }
